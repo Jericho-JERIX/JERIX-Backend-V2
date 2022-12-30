@@ -1,12 +1,12 @@
 from django.urls import path
-from .views import message
+from .views import message,homework
 
 urlpatterns = [
     path('message',message.create_message),
 
     path('homework',),
-    path('homework/<int:homework_id>',),
-    path('homework',),
+    path('homework/file/<int:file>',),
+    path('homework/',),
     path('homework',),
     
 ]

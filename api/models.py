@@ -1,4 +1,9 @@
 from django.db import models
+
+class DiscordAccount(models.Model):
+    discord_id = models.IntegerField(primary_key=True)
+    username = models.CharField(max_length=100)
+
 # Discord Message
 
 class DiscordMessage(models.Model):
@@ -33,6 +38,7 @@ class DiscordMessageMentionUser(models.Model):
 
 class HomeworkFile(models.Model):
     file_id = models.AutoField(primary_key=True)
+    owner_id = models.ForeignKey(DiscordAccount, on_delete=models.CASCADE)
     filename = models.CharField(max_length=100)
     password = models.CharField(max_length=100)
 
@@ -51,4 +57,5 @@ class Homework(models.Model):
 class HomeworkChannel(models.Model):
     channel_id = models.IntegerField(primary_key=True)
     file_id = models.ForeignKey(HomeworkFile,on_delete=models.CASCADE)
+    visible_only = models.BooleanField(default=True)
     enable_notification = models.BooleanField(default=False)
