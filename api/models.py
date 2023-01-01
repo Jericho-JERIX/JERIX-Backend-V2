@@ -38,13 +38,12 @@ class DiscordMessageMentionUser(models.Model):
 
 class HomeworkFile(models.Model):
     file_id = models.AutoField(primary_key=True)
-    owner_id = models.ForeignKey(DiscordAccount, on_delete=models.CASCADE)
+    owner_id = models.IntegerField()
     filename = models.CharField(max_length=100)
-    password = models.CharField(max_length=100)
 
 class Homework(models.Model):
     homework_id = models.AutoField(primary_key=True)
-    file_id = models.ForeignKey(HomeworkFile,on_delete=models.CASCADE)
+    file_id = models.ForeignKey(HomeworkFile,on_delete=models.CASCADE,db_column="file_id")
     is_active = models.BooleanField(default=True,blank=True)
     date = models.IntegerField()
     month = models.IntegerField()
@@ -56,6 +55,10 @@ class Homework(models.Model):
 
 class HomeworkChannel(models.Model):
     channel_id = models.IntegerField(primary_key=True)
-    file_id = models.ForeignKey(HomeworkFile,on_delete=models.CASCADE)
+    file_id = models.ForeignKey(HomeworkFile,on_delete=models.CASCADE,db_column="file_id")
     visible_only = models.BooleanField(default=True)
     enable_notification = models.BooleanField(default=False)
+
+class HomeworkAccessFileAccount(models.Model):
+    file_id = models.ForeignKey(HomeworkFile,on_delete=models.CASCADE,db_column="file_id")
+    discord_id = models.IntegerField()
