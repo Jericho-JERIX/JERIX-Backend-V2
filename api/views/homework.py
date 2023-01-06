@@ -97,8 +97,12 @@ def manage_channel(request,discord_id:int,channel_id:int):
     return Response(model_to_dict(channel),status=status.HTTP_200_OK)
 
 @api_view([GET])
-def all_homework_in_file(request,file_id:int):
-    homework = Homework.objects.filter(file_id=file_id)
+def all_homework_in_file(request,channel_id:int):
+    htype = request.query_params.get('type','ALL')
+    file = HomeworkFile.objects.get(homeworkchannel__channel_id=channel_id)
+    homework = Homework.objects.filter(file_id=file)
+    if htype != "ALL":
+        homework = homework.filter(type=htype)
     return Response([model_to_dict(i) for i in homework],status=status.HTTP_200_OK)
 
 @api_view([PUT,DELETE])
