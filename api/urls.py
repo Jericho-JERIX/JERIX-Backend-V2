@@ -1,7 +1,9 @@
 from django.urls import path
-from .views import message,homework
+from .views import greeting,message,homework
 
 urlpatterns = [
+    path('greeting',greeting.greeting),
+
     path('message',message.create_message),
 
     path('homeworklist/account/<int:discord_id>/file',homework.all_files),

@@ -103,7 +103,10 @@ def all_homework_in_file(request,channel_id:int):
     homework = Homework.objects.filter(file_id=file)
     if htype != "ALL":
         homework = homework.filter(type=htype)
-    return Response([model_to_dict(i) for i in homework],status=status.HTTP_200_OK)
+    return Response({
+        "file": model_to_dict(file),
+        "homeworks": [model_to_dict(i) for i in homework]
+    },status=status.HTTP_200_OK)
 
 @api_view([PUT,DELETE])
 def manage_homework(request,discord_id:int,channel_id:int,homework_id:int):
