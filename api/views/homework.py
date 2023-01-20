@@ -9,8 +9,9 @@ from django.forms.models import model_to_dict
 @api_view([GET])
 def all_files(request,discord_id:int):
     files = HomeworkFile.objects.filter(owner_id=discord_id)
-    files_list = [model_to_dict(i) for i in files]
-    return Response(files_list,status=status.HTTP_200_OK)
+    return Response({
+        'files': [model_to_dict(i) for i in files]
+    },status=status.HTTP_200_OK)
 
 @api_view([POST])
 def create_file(request,discord_id:int,channel_id:int):
@@ -55,8 +56,6 @@ def create_homework(request,discord_id:int,channel_id:int):
 def open_file(request,discord_id:int,channel_id:int,file_id:int):
     file = HomeworkFile.objects.get(file_id=file_id)
     channel = HomeworkChannel.objects.get(channel_id=channel_id)
-    if file.owner_id != discord_id:
-        return Response(status=status.HTTP_401_UNAUTHORIZED)
     channel.file_id = file
     channel.save()
     return Response({
@@ -88,11 +87,11 @@ def manage_file(request,discord_id:int,file_id:int):
 @api_view([PUT])
 def manage_channel(request,discord_id:int,channel_id:int):
     file = HomeworkFile.objects.get(homeworkchannel__channel_id=channel_id)
-    if file.owner_id != discord_id:
+    if request.data['can_edit'] and file.owner_id != discord_id:
         return Response(status=status.HTTP_401_UNAUTHORIZED)
     channel = HomeworkChannel.objects.get(channel_id=channel_id)
     channel.enable_notification = request.data.get('enable_notification',channel.enable_notification)
-    channel.visible_only = request.data.get('visible_only',channel.visible_only)
+    channel.can_edit = request.data.get('can_edit',channel.can_edit)
     channel.save()
     return Response(model_to_dict(channel),status=status.HTTP_200_OK)
 
@@ -105,13 +104,14 @@ def all_homework_in_file(request,channel_id:int):
         homework = homework.filter(type=htype)
     return Response({
         "file": model_to_dict(file),
-        "homeworks": [model_to_dict(i) for i in homework]
+        "homeworks": sorted([model_to_dict(i) for i in homework],key=lambda x: x['timestamp'])
     },status=status.HTTP_200_OK)
 
 @api_view([PUT,DELETE])
 def manage_homework(request,discord_id:int,channel_id:int,homework_id:int):
+    channel = HomeworkChannel.objects.get(channel_id=channel_id)
     file = HomeworkFile.objects.get(homeworkchannel__channel_id=channel_id)
-    if file.owner_id != discord_id:
+    if file.owner_id != discord_id and not channel.can_edit:
         return Response(status=status.HTTP_401_UNAUTHORIZED)
     homework = Homework.objects.get(homework_id=homework_id)
 
@@ -134,6 +134,6 @@ def manage_homework(request,discord_id:int,channel_id:int,homework_id:int):
 
         homework.save()
         return Response(model_to_dict(homework),status=status.HTTP_200_OK)
-    elif request.data == DELETE:
+    elif request.method == DELETE:
         homework.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

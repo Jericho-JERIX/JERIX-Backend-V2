@@ -56,7 +56,7 @@ class Homework(models.Model):
 class HomeworkChannel(models.Model):
     channel_id = models.IntegerField(primary_key=True)
     file_id = models.ForeignKey(HomeworkFile,on_delete=models.CASCADE,db_column="file_id")
-    visible_only = models.BooleanField(default=True)
+    can_edit = models.BooleanField(default=False)
     enable_notification = models.BooleanField(default=False)
 
 class HomeworkAccessFileAccount(models.Model):
