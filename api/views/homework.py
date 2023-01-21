@@ -57,6 +57,7 @@ def open_file(request,discord_id:int,channel_id:int,file_id:int):
     file = HomeworkFile.objects.get(file_id=file_id)
     channel = HomeworkChannel.objects.get(channel_id=channel_id)
     channel.file_id = file
+    channel.can_edit = False
     channel.save()
     return Response({
         "file": model_to_dict(file),
@@ -87,7 +88,7 @@ def manage_file(request,discord_id:int,file_id:int):
 @api_view([PUT])
 def manage_channel(request,discord_id:int,channel_id:int):
     file = HomeworkFile.objects.get(homeworkchannel__channel_id=channel_id)
-    if request.data['can_edit'] and file.owner_id != discord_id:
+    if 'can_edit' in request.data and file.owner_id != discord_id:
         return Response(status=status.HTTP_401_UNAUTHORIZED)
     channel = HomeworkChannel.objects.get(channel_id=channel_id)
     channel.enable_notification = request.data.get('enable_notification',channel.enable_notification)
@@ -97,15 +98,18 @@ def manage_channel(request,discord_id:int,channel_id:int):
 
 @api_view([GET])
 def all_homework_in_file(request,channel_id:int):
-    htype = request.query_params.get('type','ALL')
-    file = HomeworkFile.objects.get(homeworkchannel__channel_id=channel_id)
-    homework = Homework.objects.filter(file_id=file)
-    if htype != "ALL":
-        homework = homework.filter(type=htype)
-    return Response({
-        "file": model_to_dict(file),
-        "homeworks": sorted([model_to_dict(i) for i in homework],key=lambda x: x['timestamp'])
-    },status=status.HTTP_200_OK)
+    try:
+        htype = request.query_params.get('type','ALL')
+        file = HomeworkFile.objects.get(homeworkchannel__channel_id=channel_id)
+        homework = Homework.objects.filter(file_id=file)
+        if htype != "ALL":
+            homework = homework.filter(type=htype)
+        return Response({
+            "file": model_to_dict(file),
+            "homeworks": sorted([model_to_dict(i) for i in homework],key=lambda x: x['timestamp'])
+        },status=status.HTTP_200_OK)
+    except HomeworkFile.DoesNotExist:
+        return Response({"message": "This channel has not selected file yet"},status=status.HTTP_400_BAD_REQUEST)
 
 @api_view([PUT,DELETE])
 def manage_homework(request,discord_id:int,channel_id:int,homework_id:int):

@@ -1,15 +1,15 @@
 from django.db import models
 
 class DiscordAccount(models.Model):
-    discord_id = models.IntegerField(primary_key=True)
+    discord_id = models.CharField(max_length=20,primary_key=True)
     username = models.CharField(max_length=100)
 
 # Discord Message
 
 class DiscordMessage(models.Model):
-    message_id = models.IntegerField(primary_key=True)
-    discord_id = models.IntegerField()
-    channel_id = models.IntegerField()
+    message_id = models.CharField(max_length=20,primary_key=True)
+    discord_id = models.CharField(max_length=20,)
+    channel_id = models.CharField(max_length=20,)
     username = models.CharField(max_length=50)
     content = models.CharField(max_length=10000)
     datetime = models.DateTimeField(blank=True,auto_now_add=True)
@@ -38,7 +38,7 @@ class DiscordMessageMentionUser(models.Model):
 
 class HomeworkFile(models.Model):
     file_id = models.AutoField(primary_key=True)
-    owner_id = models.IntegerField()
+    owner_id = models.CharField(max_length=20,)
     filename = models.CharField(max_length=100)
 
 class Homework(models.Model):
@@ -54,11 +54,11 @@ class Homework(models.Model):
     label = models.CharField(max_length=2000)
 
 class HomeworkChannel(models.Model):
-    channel_id = models.IntegerField(primary_key=True)
+    channel_id = models.CharField(max_length=20,primary_key=True)
     file_id = models.ForeignKey(HomeworkFile,on_delete=models.CASCADE,db_column="file_id")
     can_edit = models.BooleanField(default=False)
     enable_notification = models.BooleanField(default=False)
 
 class HomeworkAccessFileAccount(models.Model):
     file_id = models.ForeignKey(HomeworkFile,on_delete=models.CASCADE,db_column="file_id")
-    discord_id = models.IntegerField()
+    discord_id = models.CharField(max_length=20,)
