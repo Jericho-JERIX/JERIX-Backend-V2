@@ -58,14 +58,25 @@ def create_homework(request,discord_id:int,channel_id:int):
 @api_view([PUT])
 def open_file(request,discord_id:int,channel_id:int,file_id:int):
     file = HomeworkFile.objects.get(file_id=file_id)
-    channel = HomeworkChannel.objects.get(channel_id=channel_id)
-    channel.file_id = file
-    channel.can_edit = False
-    channel.save()
-    return Response({
-        "file": model_to_dict(file),
-        "channel": model_to_dict(channel)
-    },status=status.HTTP_200_OK)
+    try:
+        channel = HomeworkChannel.objects.get(channel_id=channel_id)
+        channel.file_id = file
+        channel.can_edit = False
+        channel.save()
+        return Response({
+            "file": model_to_dict(file),
+            "channel": model_to_dict(channel)
+        },status=status.HTTP_200_OK)
+    except HomeworkChannel.DoesNotExist:
+        channel = HomeworkChannel(
+            channel_id=channel_id,
+            file_id=file
+        )
+        channel.save()
+        return Response({
+            "file": model_to_dict(file),
+            "channel": model_to_dict(channel)
+        },status=status.HTTP_201_CREATED)
 
 @api_view([PUT,DELETE])
 def manage_file(request,discord_id:int,file_id:int):
