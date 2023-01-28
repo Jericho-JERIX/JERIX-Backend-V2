@@ -7,14 +7,14 @@ from rest_framework import status
 from django.forms.models import model_to_dict
 
 @api_view([GET])
-def all_files(request,discord_id:int):
+def all_files(request,discord_id:str):
     files = HomeworkFile.objects.filter(owner_id=discord_id)
     return Response({
         'files': [model_to_dict(i) for i in files]
     },status=status.HTTP_200_OK)
 
 @api_view([POST])
-def create_file(request,discord_id:int,channel_id:int):
+def create_file(request,discord_id:str,channel_id:str):
     files = HomeworkFile.objects.filter(owner_id=discord_id)
     if len(files) >= 5:
         return Response({'message': "Exceeded limit!"},status=status.HTTP_403_FORBIDDEN)
@@ -35,7 +35,7 @@ def create_file(request,discord_id:int,channel_id:int):
     },status=status.HTTP_201_CREATED)
 
 @api_view([POST])
-def create_homework(request,discord_id:int,channel_id:int):
+def create_homework(request,discord_id:str,channel_id:str):
     channel = HomeworkChannel.objects.get(channel_id=channel_id)
     file = HomeworkFile.objects.get(homeworkchannel__channel_id=channel_id)
     if file.owner_id != str(discord_id) and not channel.can_edit:
@@ -56,7 +56,7 @@ def create_homework(request,discord_id:int,channel_id:int):
     return Response(model_to_dict(homework),status=status.HTTP_201_CREATED)
 
 @api_view([PUT])
-def open_file(request,discord_id:int,channel_id:int,file_id:int):
+def open_file(request,discord_id:str,channel_id:str,file_id:int):
     file = HomeworkFile.objects.get(file_id=file_id)
     try:
         channel = HomeworkChannel.objects.get(channel_id=channel_id)
@@ -79,9 +79,8 @@ def open_file(request,discord_id:int,channel_id:int,file_id:int):
         },status=status.HTTP_201_CREATED)
 
 @api_view([PUT,DELETE])
-def manage_file(request,discord_id:int,file_id:int):
+def manage_file(request,discord_id:str,file_id:int):
     file = HomeworkFile.objects.get(file_id=file_id)
-    
     if file.owner_id != discord_id:
         return Response(status=status.HTTP_401_UNAUTHORIZED)
     
@@ -100,7 +99,7 @@ def manage_file(request,discord_id:int,file_id:int):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 @api_view([PUT])
-def manage_channel(request,discord_id:int,channel_id:int):
+def manage_channel(request,discord_id:str,channel_id:str):
     file = HomeworkFile.objects.get(homeworkchannel__channel_id=channel_id)
     if 'can_edit' in request.data and file.owner_id != discord_id:
         return Response(status=status.HTTP_401_UNAUTHORIZED)
@@ -111,7 +110,7 @@ def manage_channel(request,discord_id:int,channel_id:int):
     return Response(model_to_dict(channel),status=status.HTTP_200_OK)
 
 @api_view([GET])
-def all_homework_in_file(request,channel_id:int):
+def all_homework_in_file(request,channel_id:str):
     try:
         htype = request.query_params.get('type','ALL')
         file = HomeworkFile.objects.get(homeworkchannel__channel_id=channel_id)
@@ -126,7 +125,7 @@ def all_homework_in_file(request,channel_id:int):
         return Response({"message": "This channel has not selected file yet"},status=status.HTTP_400_BAD_REQUEST)
 
 @api_view([PUT,DELETE])
-def manage_homework(request,discord_id:int,channel_id:int,homework_id:int):
+def manage_homework(request,discord_id:str,channel_id:str,homework_id:int):
     channel = HomeworkChannel.objects.get(channel_id=channel_id)
     file = HomeworkFile.objects.get(homeworkchannel__channel_id=channel_id)
     if file.owner_id != str(discord_id) and not channel.can_edit:

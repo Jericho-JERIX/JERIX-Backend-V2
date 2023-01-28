@@ -6,14 +6,14 @@ urlpatterns = [
 
     path('message',message.create_message),
 
-    path('homeworklist/account/<int:discord_id>/file',homework.all_files),
-    path('homeworklist/account/<int:discord_id>/file/<int:file_id>',homework.manage_file),
-    path('homeworklist/account/<int:discord_id>/channel/<int:channel_id>',homework.manage_channel),
-    path('homeworklist/account/<int:discord_id>/channel/<int:channel_id>/file',homework.create_file),
-    path('homeworklist/account/<int:discord_id>/channel/<int:channel_id>/file/<int:file_id>',homework.open_file),
-    path('homeworklist/account/<int:discord_id>/channel/<int:channel_id>/homework',homework.create_homework),
-    path('homeworklist/account/<int:discord_id>/channel/<int:channel_id>/homework/<int:homework_id>',homework.manage_homework),
-    path('homeworklist/channel/<int:channel_id>',homework.all_homework_in_file),
+    path('homeworklist/account/<str:discord_id>/file',homework.all_files),
+    path('homeworklist/account/<str:discord_id>/file/<int:file_id>',homework.manage_file),
+    path('homeworklist/account/<str:discord_id>/channel/<str:channel_id>',homework.manage_channel),
+    path('homeworklist/account/<str:discord_id>/channel/<str:channel_id>/file',homework.create_file),
+    path('homeworklist/account/<str:discord_id>/channel/<str:channel_id>/file/<int:file_id>',homework.open_file),
+    path('homeworklist/account/<str:discord_id>/channel/<str:channel_id>/homework',homework.create_homework),
+    path('homeworklist/account/<str:discord_id>/channel/<str:channel_id>/homework/<int:homework_id>',homework.manage_homework),
+    path('homeworklist/channel/<str:channel_id>',homework.all_homework_in_file),
 ]
 
 # - ดูไฟล์ทั้งหมด discord_id
