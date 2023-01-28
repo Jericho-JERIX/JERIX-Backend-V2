@@ -5,7 +5,7 @@ urlpatterns = [
     path('greeting',greeting.greeting),
 
     path('message',message.create_message),
-
+    
     path('homeworklist/account/<str:discord_id>/file',homework.all_files),
     path('homeworklist/account/<str:discord_id>/file/<int:file_id>',homework.manage_file),
     path('homeworklist/account/<str:discord_id>/channel/<str:channel_id>',homework.manage_channel),
@@ -14,6 +14,7 @@ urlpatterns = [
     path('homeworklist/account/<str:discord_id>/channel/<str:channel_id>/homework',homework.create_homework),
     path('homeworklist/account/<str:discord_id>/channel/<str:channel_id>/homework/<int:homework_id>',homework.manage_homework),
     path('homeworklist/channel/<str:channel_id>',homework.all_homework_in_file),
+    path('homeworklist/channel',homework.all_channel),
 ]
 
 # - ดูไฟล์ทั้งหมด discord_id

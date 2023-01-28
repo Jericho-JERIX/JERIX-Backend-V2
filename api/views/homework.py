@@ -13,6 +13,11 @@ def all_files(request,discord_id:str):
         'files': [model_to_dict(i) for i in files]
     },status=status.HTTP_200_OK)
 
+@api_view([GET])
+def all_channel(request):
+    channels = HomeworkChannel.objects.all()
+    return Response({'channels': [model_to_dict(i) for i in channels]})
+
 @api_view([POST])
 def create_file(request,discord_id:str,channel_id:str):
     files = HomeworkFile.objects.filter(owner_id=discord_id)
