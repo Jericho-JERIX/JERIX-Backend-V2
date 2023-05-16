@@ -118,12 +118,18 @@ def manage_channel(request,discord_id:str,channel_id:str):
 def all_homework_in_file(request,channel_id:str):
     try:
         htype = request.query_params.get('type','ALL')
+        currentTimestamp = int(datetime.now().timestamp())
         file = HomeworkFile.objects.get(homeworkchannel__channel_id=channel_id)
-        homework = Homework.objects.filter(file_id=file)
+        homework = Homework.objects.filter(file_id=file,timestamp__gte=currentTimestamp)
+        totalHomework = len(homework)
+        filteredHomework = len(homework)
         if htype != "ALL":
             homework = homework.filter(type=htype)
+            filteredHomework = len(homework)
         return Response({
             "file": model_to_dict(file),
+            "total_homework_count": totalHomework,
+            "type_homework_count": filteredHomework,
             "homeworks": sorted([model_to_dict(i) for i in homework],key=lambda x: x['timestamp'])
         },status=status.HTTP_200_OK)
     except HomeworkFile.DoesNotExist:
