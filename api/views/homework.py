@@ -105,14 +105,17 @@ def manage_file(request,discord_id:str,file_id:int):
 
 @api_view([PUT])
 def manage_channel(request,discord_id:str,channel_id:str):
-    file = HomeworkFile.objects.get(homeworkchannel__channel_id=channel_id)
-    if 'can_edit' in request.data and file.owner_id != discord_id:
-        return Response(status=status.HTTP_401_UNAUTHORIZED)
-    channel = HomeworkChannel.objects.get(channel_id=channel_id)
-    channel.enable_notification = request.data.get('enable_notification',channel.enable_notification)
-    channel.can_edit = request.data.get('can_edit',channel.can_edit)
-    channel.save()
-    return Response(model_to_dict(channel),status=status.HTTP_200_OK)
+    try:
+        file = HomeworkFile.objects.get(homeworkchannel__channel_id=channel_id)
+        if 'can_edit' in request.data and file.owner_id != discord_id:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        channel = HomeworkChannel.objects.get(channel_id=channel_id)
+        channel.enable_notification = request.data.get('enable_notification',channel.enable_notification)
+        channel.can_edit = request.data.get('can_edit',channel.can_edit)
+        channel.save()
+        return Response(model_to_dict(channel),status=status.HTTP_200_OK)
+    except HomeworkFile.DoesNotExist:
+        return Response({"message": "This channel has not selected file yet"},status=status.HTTP_400_BAD_REQUEST)
 
 @api_view([GET])
 def all_homework_in_file(request,channel_id:str):
