@@ -21,8 +21,8 @@ def all_channel(request):
 @api_view([POST])
 def create_file(request,discord_id:str,channel_id:str):
     files = HomeworkFile.objects.filter(owner_id=discord_id)
-    if len(files) >= 5:
-        return Response({'message': "Exceeded limit!"},status=status.HTTP_403_FORBIDDEN)
+    # if len(files) >= 5:
+        # return Response({'message': "Exceeded limit!"},status=status.HTTP_403_FORBIDDEN)
     files_list = [model_to_dict(i) for i in files]
     request.data['filename'] = request.data['filename'].lower().replace(' ','-')
     if request.data['filename'] in [i['filename'] for i in files_list]:
