@@ -5,6 +5,7 @@ from ..constant import GET,POST,PUT,DELETE
 from ..models import Homework,HomeworkChannel,HomeworkFile,HomeworkAccessFileAccount
 from rest_framework import status
 from django.forms.models import model_to_dict
+from ..serializer import *
 
 @api_view([GET])
 def all_files(request,discord_id:str):
@@ -16,7 +17,10 @@ def all_files(request,discord_id:str):
 @api_view([GET])
 def all_channel(request):
     channels = HomeworkChannel.objects.all()
-    return Response({'channels': [model_to_dict(i) for i in channels]})
+    
+    serializes = HomeworkChannelSerializer(channels,many=True)
+    
+    return Response({'channels': serializes.data})
 
 @api_view([POST])
 def create_file(request,discord_id:str,channel_id:str):
