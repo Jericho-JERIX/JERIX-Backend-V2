@@ -49,12 +49,15 @@ def create_homework(request,discord_id:str,channel_id:str):
     file = HomeworkFile.objects.get(homeworkchannel__channel_id=channel_id)
     if file.owner_id != str(discord_id) and not channel.can_edit:
         return Response(status=status.HTTP_401_UNAUTHORIZED)
-    timestamp = datetime(
-        request.data["year"],
-        request.data["month"],
-        request.data["date"],
-        23,59,59
-    )
+    try:
+        timestamp = datetime(
+            request.data["year"],
+            request.data["month"],
+            request.data["date"],
+            23,59,59
+        )
+    except:
+        return Response({"message": "Invalid date"},status=status.HTTP_400_BAD_REQUEST)
     homework = Homework(
         file_id=file,
         timestamp = int(timestamp.timestamp()),
@@ -157,12 +160,15 @@ def manage_homework(request,discord_id:str,channel_id:str,homework_id:int):
         homework.type = request.data.get("type",homework.type)
         homework.label = request.data.get("label",homework.label)
 
-        timestamp = datetime(
+        try:
+            timestamp = datetime(
             homework.year,
             homework.month,
             homework.date,
             23,59,59
         )
+        except:
+            return Response({"message": "Invalid date"},status=status.HTTP_400_BAD_REQUEST)
 
         homework.timestamp = int(timestamp.timestamp())
         homework.day_name = timestamp.strftime("%A")
