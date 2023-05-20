@@ -3,7 +3,7 @@ from rest_framework import serializers
 
 class HomeworkSerializer(serializers.ModelSerializer):
     class Meta:
-        models = Homework
+        model = Homework
         fields = "__all__"
 
 class HomeworkFileSerializer(serializers.ModelSerializer):
