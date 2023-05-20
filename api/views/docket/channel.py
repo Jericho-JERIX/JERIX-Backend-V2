@@ -5,7 +5,7 @@ from ...constant import GET,POST,PUT,DELETE
 from ...models import Homework,HomeworkChannel,HomeworkFile,HomeworkAccessFileAccount
 from rest_framework import status
 from django.forms.models import model_to_dict
-from ...serializer import *
+from ...serializers.docket import *
 
 @api_view([GET])
 def all_channel(request):

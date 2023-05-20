@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views.docket import homework,file,channel
+from .views.docket import homework,file,channel,statistic
 from .views import greeting,message
 
 urlpatterns = [
@@ -17,6 +17,7 @@ urlpatterns = [
     path('homeworklist/account/<str:discord_id>/channel/<str:channel_id>/homework/<int:homework_id>',homework.manage_homework),
     path('homeworklist/channel/<str:channel_id>',homework.all_homework_in_file),
     path('homeworklist/channel',channel.all_channel),
+    path('homeworklist/statistic/general',statistic.get_general_info)
 ]
 
 # - ดูไฟล์ทั้งหมด discord_id
