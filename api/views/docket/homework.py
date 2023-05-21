@@ -8,6 +8,7 @@ from django.forms.models import model_to_dict
 from ...serializers.docket import *
 from decouple import config
 from django.db.models import Q
+from ...utilities.yearDecider import yearDecider
 
 DELTA_TIME_SECOND = int(config("DELTA_TIME_SECOND"))
 MAX_TIMESTAMP = 9999999999
@@ -38,8 +39,9 @@ def create_homework(request,discord_id:str,channel_id:str):
     
     else:
         try:
+            decidedYear = yearDecider(request.data["date"],request.data["month"])
             timestamp = datetime(
-                request.data["year"],
+                decidedYear,
                 request.data["month"],
                 request.data["date"],
                 23,59,59
@@ -51,7 +53,8 @@ def create_homework(request,discord_id:str,channel_id:str):
             file_id=file,
             timestamp = finalTimestamp,
             day_name = timestamp.strftime("%A"),
-            **request.data
+            **request.data,
+            year = decidedYear
         )
 
         homework.save()
@@ -95,23 +98,32 @@ def manage_homework(request,discord_id:str,channel_id:str,homework_id:int):
         if request.data.get("no_deadline",False):
             homework.no_deadline = True 
             homework.timestamp = MAX_TIMESTAMP
+        elif homework.no_deadline and "date" not in request.data and "month" not in request.data:
+            pass
         else:
-            try:
-                if homework.no_deadline and ("date" not in request.data or "month" not in request.data or "year" not in request.data):
-                    raise Exception()
+            # try:
+            if homework.no_deadline and (("date" in request.data and "month" not in request.data) or ("date" not in request.data and "month" in request.data)):
+                raise Exception()
 
-                homework.date = request.data.get("date",homework.date)
-                homework.month = request.data.get("month",homework.month)
-                homework.year = request.data.get("year",homework.year)
+            print('pass')
+            homework.date = request.data.get("date",homework.date)
+            homework.month = request.data.get("month",homework.month)
 
-                timestamp = datetime(
-                homework.year,
-                homework.month,
-                homework.date,
-                23,59,59
+            decidedYear = yearDecider(homework.date,homework.month)
+            
+            homework.year = decidedYear
+
+            print(homework.date,homework.month,homework.year)
+
+            timestamp = datetime(
+            homework.year,
+            homework.month,
+            homework.date,
+            23,59,59
             )
-            except:
-                return Response({"message": "Invalid date"},status=status.HTTP_400_BAD_REQUEST)
+
+            # except:
+            #     return Response({"message": "Invalid date"},status=status.HTTP_400_BAD_REQUEST)
 
             homework.no_deadline = False
             homework.timestamp = int(timestamp.timestamp()) + DELTA_TIME_SECOND
