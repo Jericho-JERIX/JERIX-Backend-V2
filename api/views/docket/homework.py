@@ -63,7 +63,7 @@ def all_homework_in_file(request,channel_id:str):
         htype = request.query_params.get('type','ALL')
         currentTimestamp = int(datetime.now().timestamp())
         file = HomeworkFile.objects.get(homeworkchannel__channel_id=channel_id)
-        homework = Homework.objects.filter(Q(file_id=file) & Q(timestamp__gte=currentTimestamp) | Q(no_deadline=True))
+        homework = Homework.objects.filter(file_id=file,timestamp__gte=currentTimestamp)
         # noDeadlineHomework = homework.filter(no_deadline=True)
 
         totalHomework = len(homework)
