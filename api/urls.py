@@ -15,6 +15,7 @@ urlpatterns = [
     path('homeworklist/account/<str:discord_id>/channel/<str:channel_id>/file/<int:file_id>',channel.open_file),
     path('homeworklist/account/<str:discord_id>/channel/<str:channel_id>/homework',homework.create_homework),
     path('homeworklist/account/<str:discord_id>/channel/<str:channel_id>/homework/<int:homework_id>',homework.manage_homework),
+    path('homeworklist/account/<str:discord_id>/channel/<str:channel_id>/homework/<int:homework_id>/check',homework.check_homework),
     path('homeworklist/channel/<str:channel_id>',homework.all_homework_in_file),
     path('homeworklist/channel',channel.all_channel),
     path('homeworklist/statistic/general',statistic.get_general_info)
