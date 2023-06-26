@@ -53,7 +53,10 @@ def create_homework(request,discord_id:str,channel_id:str):
             file_id=file,
             timestamp = finalTimestamp,
             day_name = timestamp.strftime("%A"),
-            **request.data,
+            date = request.data["date"],
+            month = request.data["month"],
+            type = request.data["type"],
+            label =  request.data["label"], 
             year = decidedYear
         )
 
