@@ -152,10 +152,10 @@ def manage_homework(request,discord_id:str,channel_id:str,homework_id:int):
             pass
         else:
             # try:
-            if homework.no_deadline and (("date" in request.data and "month" not in request.data) or ("date" not in request.data and "month" in request.data)):
-                raise Exception()
+            # if homework.no_deadline and (("date" in request.data and "month" not in request.data) or ("date" not in request.data and "month" in request.data)):
+            #     raise Exception()
 
-            print('pass')
+            # print('pass')
             homework.date = request.data.get("date",homework.date)
             homework.month = request.data.get("month",homework.month)
 
