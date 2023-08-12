@@ -13,6 +13,49 @@ from ...utilities.yearDecider import yearDecider
 DELTA_TIME_SECOND = int(config("DELTA_TIME_SECOND"))
 MAX_TIMESTAMP = 9999999999
 
+def search_homework(homeworks,keywords:str):
+
+    if keywords == "":
+        return homeworks
+
+    Months = [
+    "january",
+    "febuary",
+    "march",
+    "april",
+    "may",
+    "june",
+    "july",
+    "august",
+    "september",
+    "october",
+    "november",
+    "december"
+]
+
+    related_label = homeworks.filter(label__icontains=keywords)
+    related_type = homeworks.filter(type__icontains=keywords)
+    related_dayname = homeworks.filter(day_name__icontains=keywords)
+
+    try:
+        related_date = homeworks.filter(date=keywords)
+    except:
+        related_date = homeworks.filter(date=-1)
+
+    try:
+        related_month = homeworks.filter(month=keywords)
+    except:
+        month_number = -1
+        for i in range(len(Months)):
+            if keywords.lower() in Months[i]:
+                month_number = i + 1
+                break
+        related_month = homeworks.filter(month=month_number)
+
+    related = related_label | related_type | related_date | related_month | related_dayname
+
+    return related
+
 @api_view([POST])
 def create_homework(request,discord_id:str,channel_id:str):
     channel = HomeworkChannel.objects.get(channel_id=channel_id)
@@ -78,6 +121,10 @@ def all_homework_in_file(request,channel_id:str):
         if htype != "ALL":
             homework = homework.filter(type=htype)
             filteredHomework = len(homework)
+
+        
+        homework = search_homework(homework,request.query_params.get('keyword',''))
+        
         return Response({
             "file": model_to_dict(file),
             "total_homework_count": totalHomework,
@@ -105,10 +152,10 @@ def manage_homework(request,discord_id:str,channel_id:str,homework_id:int):
             pass
         else:
             # try:
-            if homework.no_deadline and (("date" in request.data and "month" not in request.data) or ("date" not in request.data and "month" in request.data)):
-                raise Exception()
+            # if homework.no_deadline and (("date" in request.data and "month" not in request.data) or ("date" not in request.data and "month" in request.data)):
+            #     raise Exception()
 
-            print('pass')
+            # print('pass')
             homework.date = request.data.get("date",homework.date)
             homework.month = request.data.get("month",homework.month)
 
