@@ -25,6 +25,7 @@ Months = [
 @api_view([GET])
 def search_homework(request,channel_id:str):
     homeworks = Homework.objects.filter(file_id__homeworkchannel__channel_id=channel_id)
+    print([model_to_dict(i) for i in homeworks])
     
     keywords = request.data["keyword"]
 

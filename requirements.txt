@@ -4,3 +4,4 @@ djangorestframework==3.13.1
 django-environ==0.9.0
 python-decouple
 environ
+Whoosh==2.7.4

@@ -8,12 +8,15 @@ from django.forms.models import model_to_dict
 from ...serializers.docket import *
 from decouple import config
 from django.db.models import Q
-from ...utilities.yearDecider import yearDecider
+from ...utilities.year_decider import yearDecider
+from ...utilities.search_engine import fetchSearchedResult
 
 DELTA_TIME_SECOND = int(config("DELTA_TIME_SECOND"))
 MAX_TIMESTAMP = 9999999999
 
 def search_homework(homeworks,keywords:str):
+
+    print([model_to_dict(i) for i in homeworks])
 
     if keywords == "":
         return homeworks
@@ -123,7 +126,7 @@ def all_homework_in_file(request,channel_id:str):
             filteredHomework = len(homework)
 
         
-        homework = search_homework(homework,request.query_params.get('keyword',''))
+        homework = fetchSearchedResult(homework,request.query_params.get('keyword',''))
         
         return Response({
             "file": model_to_dict(file),
