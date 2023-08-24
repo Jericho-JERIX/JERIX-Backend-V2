@@ -8,7 +8,7 @@ datasets = [{'homework_id': 90, 'file_id': 8, 'is_active': True, 'date': 1, 'mon
 False, 'is_checked': False}, {'homework_id': 116, 'file_id': 8, 'is_active': True, 'date': 8, 'month': 8, 'year': 2023, 'timestamp': 9999999999, 'day_name': 'Tuesday', 'type': 'ASSIGNMENT', 
 'label': '11111', 'no_deadline': True, 'is_checked': False}, {'homework_id': 117, 'file_id': 8, 'is_active': True, 'date': 5, 'month': 7, 'year': 2024, 'timestamp': 9999999999, 'day_name': 'Friday', 'type': 'ASSIGNMENT', 'label': '1235555', 'no_deadline': True, 'is_checked': True}]
 
-def fetchSearchedResult(homeworks,keyword):
+def fetchSearchedHomeworkId(homeworks,keyword):
 
     schema = Schema(title=TEXT(stored=True), path=ID(stored=True), content=TEXT)
 
@@ -30,5 +30,4 @@ def fetchSearchedResult(homeworks,keyword):
     with ix.searcher() as searcher:
         query = QueryParser("content", ix.schema).parse(keyword)
         results = searcher.search(query)
-        result_id = [int(result['path']) for result in results]
-        print([i for i in homeworks if i['homework_id'] in result_id])
+        return [int(result['path']) for result in results]

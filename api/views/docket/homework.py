@@ -9,7 +9,7 @@ from ...serializers.docket import *
 from decouple import config
 from django.db.models import Q
 from ...utilities.year_decider import yearDecider
-from ...utilities.search_engine import fetchSearchedResult
+from ...utilities.search_engine import fetchSearchedHomeworkId
 
 DELTA_TIME_SECOND = int(config("DELTA_TIME_SECOND"))
 MAX_TIMESTAMP = 9999999999
@@ -115,6 +115,7 @@ def all_homework_in_file(request,channel_id:str):
         htype = request.query_params.get('type','ALL')
         currentTimestamp = int(datetime.now().timestamp())
         file = HomeworkFile.objects.get(homeworkchannel__channel_id=channel_id)
+
         homework = Homework.objects.filter(file_id=file,timestamp__gte=currentTimestamp)
         # noDeadlineHomework = homework.filter(no_deadline=True)
 
@@ -125,8 +126,12 @@ def all_homework_in_file(request,channel_id:str):
             homework = homework.filter(type=htype)
             filteredHomework = len(homework)
 
-        
-        homework = fetchSearchedResult(homework,request.query_params.get('keyword',''))
+        homeworkToDict = [model_to_dict(i) for i in homework]
+        keyword = request.query_params.get('keyword','')
+
+        if keyword != '':
+            searchedId = fetchSearchedHomeworkId(homeworkToDict,keyword)
+            homework = homework.filter(homework_id__in=searchedId)
         
         return Response({
             "file": model_to_dict(file),
