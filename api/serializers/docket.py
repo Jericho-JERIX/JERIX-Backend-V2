@@ -1,5 +1,10 @@
-from .models import *
+from ..models import *
 from rest_framework import serializers
+
+class HomeworkSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Homework
+        fields = "__all__"
 
 class HomeworkFileSerializer(serializers.ModelSerializer):
     class Meta:

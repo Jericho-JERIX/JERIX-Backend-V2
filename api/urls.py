@@ -1,20 +1,25 @@
 from django.urls import path
-from .views import greeting,message,homework
+
+from .views.docket import homework,file,channel,statistic,search
+from .views import greeting,message
 
 urlpatterns = [
     path('greeting',greeting.greeting),
 
     path('message',message.create_message),
     
-    path('homeworklist/account/<str:discord_id>/file',homework.all_files),
-    path('homeworklist/account/<str:discord_id>/file/<int:file_id>',homework.manage_file),
-    path('homeworklist/account/<str:discord_id>/channel/<str:channel_id>',homework.manage_channel),
-    path('homeworklist/account/<str:discord_id>/channel/<str:channel_id>/file',homework.create_file),
-    path('homeworklist/account/<str:discord_id>/channel/<str:channel_id>/file/<int:file_id>',homework.open_file),
+    path('homeworklist/account/<str:discord_id>/file',file.all_files),
+    path('homeworklist/account/<str:discord_id>/file/<int:file_id>',file.manage_file),
+    path('homeworklist/account/<str:discord_id>/channel/<str:channel_id>',channel.manage_channel),
+    path('homeworklist/account/<str:discord_id>/channel/<str:channel_id>/file',file.create_file),
+    path('homeworklist/account/<str:discord_id>/channel/<str:channel_id>/file/<int:file_id>',channel.open_file),
     path('homeworklist/account/<str:discord_id>/channel/<str:channel_id>/homework',homework.create_homework),
     path('homeworklist/account/<str:discord_id>/channel/<str:channel_id>/homework/<int:homework_id>',homework.manage_homework),
+    path('homeworklist/account/<str:discord_id>/channel/<str:channel_id>/homework/<int:homework_id>/check',homework.check_homework),
     path('homeworklist/channel/<str:channel_id>',homework.all_homework_in_file),
-    path('homeworklist/channel',homework.all_channel),
+    path('homeworklist/channel',channel.all_channel),
+    path('homeworklist/statistic/general',statistic.get_general_info),
+    # path('homeworklist/search/<str:channel_id>',search.search_homework),
 ]
 
 # - ดูไฟล์ทั้งหมด discord_id

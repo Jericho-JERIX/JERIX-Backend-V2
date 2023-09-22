@@ -52,6 +52,8 @@ class Homework(models.Model):
     day_name = models.CharField(max_length=10)
     type = models.CharField(max_length=15)
     label = models.CharField(max_length=2000)
+    no_deadline = models.BooleanField(default=False)
+    is_checked = models.BooleanField(default=False)
 
 class HomeworkChannel(models.Model):
     channel_id = models.CharField(max_length=20,primary_key=True)
